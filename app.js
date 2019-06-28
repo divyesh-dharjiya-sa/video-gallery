@@ -22,22 +22,10 @@ app.use(express.static("./public"));
 const storage = multer.diskStorage({
   destination: "./public/uploads",
   filename: function(req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+    fName = file.fieldname + "-" + Date.now() + path.extname(file.originalname);
+    cb(null, fName);
   }
 });
-
-//Init upload
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 11500000 },
-  fileFilter: function(req, file, cb) {
-    checkFileType(file, cb);
-  }
-}).single("myImage");
-
 //Check File Type
 function checkFileType(file, cb) {
   //Allowed extensions
@@ -46,9 +34,26 @@ function checkFileType(file, cb) {
   const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
   //check MIME
   const mimeType = fileTypes.test(file.mimetype);
-  if (mimeType && extName) return cb(null, true);
-  else cb("Error: Images Only!");
+  if (!mimeType && extName) {
+    cb("Error: Videos Only!");
+
+  } else {
+    return cb(null, true);
+
+  }
 }
+//Init upload
+
+var upload = multer({
+  fileFilter: function (req, file, cb) {
+    if (path.extension(file.originalname) !== '.pdf') {
+      return cb(null, false)
+    }
+
+    cb(null, true)
+  }
+})
+
 
 app.get("/", function(req, res) {
   res.render("home");
@@ -71,7 +76,6 @@ app.get("/videogallery", function(req, res) {
 app.post("/upload", function(req, res) {
   var name = req.body.name;
   var path = req.body.path;
-
   var newVideoGallery = {
     name: name,
     path: path
@@ -85,12 +89,41 @@ app.post("/upload", function(req, res) {
     }
   });
 });
+// app.post("/upload", function(req, res) {
+
+//   upload(req, res, err => {
+//     var name = req.body.name;
+//     var path = req.body.path;
+
+//     var newVideoGallery = {
+//       name: name,
+//       path: path
+//     };
+//     if (err) {
+//       res.render("upload", { msg: err });
+//     } else {
+//       if (req.file == undefined) {
+//         res.render("upload", { msg: "Error: No File Selected!" });
+//       } else {
+//         //Create a new image and save to db
+//         Videogallary.create(newVideoGallery, function(err, video) {
+//               if (err) {
+//                 console.log(error);
+//               } else {
+//                 console.log(video);
+//                 res.redirect("/upload");
+//               }
+//             });
+//       }
+//     }
+//   });
+// });
 
 app.get("/video/:id", function(req, res) {
   var id = req.params.id;
   res.render("playvideo", { id: id });
 });
 
-app.listen(5000, function(req, res) {
+app.listen(2000, function(req, res) {
   console.log("Video Gallery Start....");
 });
