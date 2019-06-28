@@ -1,0 +1,29 @@
+<% include ../partials/header %>
+
+<form action="/upload" method="POST">
+	<div class="container">
+		<h4>Note: <span>Upload Video Files Only....</span></h1><br /><br />
+			<div class="card" style="width: 70%; border: 2px solid black">
+				<div class="card-header" style="border-bottom: 2px solid black">
+					Upload Your Video File
+				</div><br />
+				
+				<div class="card-body" style="position: relative; left: 200px;">
+
+					<div class="input-group" style="width:45%;">
+						<div class="custom-file">
+							<input type="file" name="path" class="custom-file-input">
+							<label class="custom-file-label" for="inputGroupFile01">Select Video files Only</label>
+						</div><br /><br /><br />
+
+						<div class="container" style="text-align: center">
+							<button class="btn btn-primary">Upload</button>
+						</div>
+					</div><br /><br />
+				</div>
+			</div><br /><br />
+</form>
+
+<a href="/" class="btn btn-primary">Go Back!!</a>
+
+<% include ../partials/footer %>
