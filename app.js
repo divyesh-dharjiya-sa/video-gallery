@@ -5,7 +5,7 @@ const ejs = require("ejs");
 require("dotenv").config();
 var app = express();
 app.set("view engine", "ejs");
-
+var fname;
 var mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/videoGallery", {
   useNewUrlParser: true
@@ -23,7 +23,8 @@ app.use(express.static("./public"));
 const storage = multer.diskStorage({
   destination: "./public/uploads/",
   filename: function(req, file, cb) {
-    cb(null, file.path + "-" + Date.now() + path.extname(file.originalname));
+    fname = file.fieldname + "-" + Date.now() + path.extname(file.originalname);
+    cb(null, fname);
   }
 });
 
@@ -34,7 +35,7 @@ const upload = multer({
   fileFilter: function(req, file, cb) {
     checkFileType(file, cb);
   }
-}).single("path");
+}).single("myVideo");
 
 // Check File Type
 function checkFileType(file, cb) {
@@ -79,8 +80,10 @@ app.post('/videogallery', (req, res) => {
               res.render('upload', { msg: 'Error: No File Selected!' });
           } else {
 
-            var name = req.file.originalname;
-      var path = req.file.originalname;
+            var name = fname;
+            var path = req.file.originalname;
+
+      console.log(req);
       var newVideoGallery = {
         name: name,
         path: path
@@ -100,7 +103,7 @@ app.post('/videogallery', (req, res) => {
   });
 });
 
-app.get("/video/:id", function(req, res) {
+app.get("/playvideo/:id", function(req, res) {
   var id = req.params.id;
   res.render("playvideo", { id: id });
 });

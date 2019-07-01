@@ -7,11 +7,10 @@
     </div> -->
 <% gallery.forEach(function(item){ %>
     <% var x = 1; %>
-    
     <div class="container">
-        <a href="/video/<%= item.path %>">
+        <a href="/playvideo/<%=item.name%>">
             <video class="video-fluid z-depth-1"  autoplay loop controls muted width="300" height="250" controls style="float: left; margin: 20px; border: 3px solid black" >
-                <source src = "../videos/<%=item.path%>" type="video/mp4">
+                <source src = "../uploads/<%=item.name%>" type="video/mp4">
             </video>
         </a>
       </div>
