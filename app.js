@@ -72,7 +72,6 @@ app.get("/videogallery", function(req, res) {
 
 app.post('/videogallery', (req, res) => {
   upload(req, res, (err) => {
-    console.log(req);
       if (err) {
           res.render('upload', { msg: err });
       } else {
