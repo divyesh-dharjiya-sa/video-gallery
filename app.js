@@ -1,7 +1,7 @@
 var express = require("express");
 var multer = require("multer");
 var path = require("path");
-
+require("dotenv").config();
 var app = express();
 app.set("view engine", "ejs");
 
@@ -124,6 +124,6 @@ app.get("/video/:id", function(req, res) {
   res.render("playvideo", { id: id });
 });
 
-app.listen(2000, function(req, res) {
+app.listen(process.env.PORT, function(req, res) {
   console.log("Video Gallery Start....");
 });
