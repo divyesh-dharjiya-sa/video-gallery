@@ -1,6 +1,6 @@
 # Chart
 
-This Project is about creating chart using node, expressJS and mongoDB. This is just for the learning purpose.
+This Project is about creating Video Gallery Using Html,Css,Javascript,expressJS & mongoDB. It is just for the learning purpose.
 
 # Getting Started
 
@@ -31,7 +31,3 @@ localhost:3000
 # Authors
 
 Divyesh Dharjiya
-
-# License
-
-For now this project does not hold licence.
