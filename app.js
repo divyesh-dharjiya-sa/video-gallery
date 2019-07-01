@@ -1,6 +1,7 @@
 var express = require("express");
 var multer = require("multer");
 var path = require("path");
+const ejs = require("ejs");
 require("dotenv").config();
 var app = express();
 app.set("view engine", "ejs");
@@ -20,40 +21,36 @@ app.use(express.static("./public"));
 
 //Set Storage Engine
 const storage = multer.diskStorage({
-  destination: "./public/uploads",
+  destination: "./public/uploads/",
   filename: function(req, file, cb) {
-    fName = file.fieldname + "-" + Date.now() + path.extname(file.originalname);
-    cb(null, fName);
+    cb(null, file.path + "-" + Date.now() + path.extname(file.originalname));
   }
 });
-//Check File Type
+
+// Init Upload
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 100000000 },
+  fileFilter: function(req, file, cb) {
+    checkFileType(file, cb);
+  }
+}).single("path");
+
+// Check File Type
 function checkFileType(file, cb) {
-  //Allowed extensions
-  const fileTypes = /mp4/;
-  //check extensions
-  const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
-  //check MIME
-  const mimeType = fileTypes.test(file.mimetype);
-  if (!mimeType && extName) {
-    cb("Error: Videos Only!");
+  // Allowed ext
+  const filetypes = /mp4/;
+  // Check ext
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  // Check mime
+  const mimetype = filetypes.test(file.mimetype);
 
-  } else {
+  if (mimetype && extname) {
     return cb(null, true);
-
+  } else {
+    cb("Error: Upload Videos Only!");
   }
 }
-//Init upload
-
-var upload = multer({
-  fileFilter: function (req, file, cb) {
-    if (path.extension(file.originalname) !== '.pdf') {
-      return cb(null, false)
-    }
-
-    cb(null, true)
-  }
-})
-
 
 app.get("/", function(req, res) {
   res.render("home");
@@ -73,51 +70,36 @@ app.get("/videogallery", function(req, res) {
   });
 });
 
-app.post("/upload", function(req, res) {
-  var name = req.body.name;
-  var path = req.body.path;
-  var newVideoGallery = {
-    name: name,
-    path: path
-  };
-  Videogallary.create(newVideoGallery, function(err, newVideoGallery) {
-    if (err) {
-      console.log(error);
-    } else {
-      console.log(newVideoGallery);
-      res.redirect("/videogallery");
-    }
+app.post('/videogallery', (req, res) => {
+  upload(req, res, (err) => {
+    console.log(req);
+      if (err) {
+          res.render('upload', { msg: err });
+      } else {
+          if (req.file == undefined) {
+              res.render('upload', { msg: 'Error: No File Selected!' });
+          } else {
+
+            var name = req.file.originalname;
+      var path = req.file.originalname;
+      var newVideoGallery = {
+        name: name,
+        path: path
+      };
+              //Create a new image and save to db
+              Videogallary.create(newVideoGallery, function(err, newlyCreated) {
+                  if (err) {
+                      console.log(err);
+                  } else {
+                      Videogallary.find({}, function(err, allVideoGallery) {
+                          res.render('upload', { gallery: allVideoGallery });
+                      });
+                  }
+              });
+          }
+      }
   });
 });
-// app.post("/upload", function(req, res) {
-
-//   upload(req, res, err => {
-//     var name = req.body.name;
-//     var path = req.body.path;
-
-//     var newVideoGallery = {
-//       name: name,
-//       path: path
-//     };
-//     if (err) {
-//       res.render("upload", { msg: err });
-//     } else {
-//       if (req.file == undefined) {
-//         res.render("upload", { msg: "Error: No File Selected!" });
-//       } else {
-//         //Create a new image and save to db
-//         Videogallary.create(newVideoGallery, function(err, video) {
-//               if (err) {
-//                 console.log(error);
-//               } else {
-//                 console.log(video);
-//                 res.redirect("/upload");
-//               }
-//             });
-//       }
-//     }
-//   });
-// });
 
 app.get("/video/:id", function(req, res) {
   var id = req.params.id;

@@ -1,13 +1,20 @@
-<% include ../partials/header %><br/><br/>
-
+<% include ../partials/header %>
+  <!-- <div class="row">
+    <div class="col-md-4">
+      <div class="thumbnail">
+        
+      </div>
+    </div> -->
 <% gallery.forEach(function(item){ %>
     <% var x = 1; %>
+    
+    <div class="container">
         <a href="/video/<%= item.path %>">
-            <video class="video-fluid z-depth-1" style="border: 10px solid #D3D3D3; margin-left : 220px" autoplay loop controls muted width="600" height="450" controls>
+            <video class="video-fluid z-depth-1"  autoplay loop controls muted width="300" height="250" controls style="float: left; margin: 20px; border: 3px solid black" >
                 <source src = "../videos/<%=item.path%>" type="video/mp4">
-                Your browser does not support HTML5 video.
             </video>
         </a>
+      </div>
 <% }); %>
 
 <% include ../partials/footer %>
