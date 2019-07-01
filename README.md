@@ -1,4 +1,4 @@
-# Chart
+# Video Gallery
 
 This Project is about creating Video Gallery Using Html,Css,Javascript,expressJS & mongoDB. It is just for the learning purpose.
 
